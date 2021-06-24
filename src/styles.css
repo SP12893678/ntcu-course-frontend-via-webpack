@@ -1,0 +1,23 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+/* @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&display=swap'); */
+/* 
+@font-face {
+    font-family: 'Faster';
+    src: url('./assets/font/FasterOne-Regular.ttf');
+} */
+
+
+@font-face {
+    font-family: 'MajorMonoDisplay';
+    src: url('./assets/font/MajorMonoDisplay-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Super';
+    src: url('./assets/font/Super.ttf');
+}
