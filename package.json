@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config ./webpack.dev.js",
     "build": "webpack --config ./webpack.prod.js",
-    "depoly": "sh ./deploy.sh"
+    "depoly": "deploy.sh"
   },
   "keywords": [],
   "author": "",

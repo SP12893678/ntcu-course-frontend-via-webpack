@@ -1,12 +1,11 @@
 import axios from 'axios'
 
 // axios.defaults.timeout = 60000
-axios.defaults.baseURL = 'http://127.0.0.1:9090' //process.env.API_URL
+axios.defaults.baseURL = 'http://127.0.0.1:3000' // process.env.API_URL
 // axios.defaults.headers = {
 //     'Access-Control-Allow-Origin': '*',
 //     'Content-Type': 'application/json',
 // }
-
 
 const $http = axios
 
@@ -15,7 +14,7 @@ const initState = function () {
 
     }
 }
-//state
+// state
 const state = initState()
 const getters = {}
 
@@ -35,23 +34,21 @@ const respondFunc = ({ dispatch, commit, state, rootState, json, data, resolve, 
     return data
 }
 
-
-
-//actions
+// actions
 const actions = {
     post ({ dispatch, commit, state, rootState }, json) {
         return new Promise((resolve, reject) => {
             beforeApiCall('post', json.api)
             const api = json.api
             delete json.api
-            json['loginToken'] = rootState.user.loginToken
+            json.loginToken = rootState.user.loginToken
             $http.post(api, json)
                 .then(({ data }) => {
                     resolve(respondFunc({ dispatch, commit, state, rootState, json, data, resolve, reject }))
                 })
                 .catch((error) => {
                     console.log(error.message)
-                    commit('dialogBox',{dialog:true}, { root: true });
+                    commit('dialogBox', { dialog: true }, { root: true })
                     resolve(false)
                 })
         })
@@ -79,7 +76,6 @@ const actions = {
 const mutations = {
 
 }
-
 
 export default {
     namespaced: true,

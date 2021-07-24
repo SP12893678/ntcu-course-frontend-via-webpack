@@ -1,12 +1,6 @@
 const initState = function () {
     return {
-        loginToken: '',
-        user: {
-            name: '',
-            email: '',
-            password: '',
-            role: ''
-        }
+        courses: []
     }
 }
 const state = initState()
@@ -17,11 +11,11 @@ const actions = {
     test ({ commit, state }, data) {
         console.log('cross state test', data)
     },
-    getUserData ({ dispatch, commit, state }) {
+    getAllCourseData ({ dispatch, commit, state }) {
         return new Promise((resolve, reject) => {
-            dispatch('http/post', { api: 'profile' }, { root: true }).then((data) => {
-                if (data.status) {
-                    commit('setUserData', data.result)
+            dispatch('http/get', { api: 'courses' }, { root: true }).then(res => {
+                if (res.status == '1') {
+                    commit('setAllCourseData', res.data)
                     resolve(true)
                 } else {
                     resolve(false)
@@ -35,16 +29,9 @@ const actions = {
 // mutations
 const mutations = {
 
-    setUserLogin (state, value) {
-
+    setAllCourseData (state, value) {
+        state.courses = value
     },
-    setUserLogout (state) {
-
-    },
-    setUserData (state, value) {
-
-    },
-
     reset (state) {
         state = Object.assign(state, initState())
     }

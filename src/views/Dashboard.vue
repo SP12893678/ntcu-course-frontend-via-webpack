@@ -198,10 +198,10 @@
       <div class="flex items-center justify-center mt-4">
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
           <!-- 1 card -->
-          <div class="relative bg-white py-6 px-6 rounded-3xl w-64 my-4 shadow-xl">
-            <!-- <div class=" text-white flex items-center absolute rounded-full py-4 px-4 shadow-xl bg-pink-500 right-4 -top-3">
+          <!-- <div class="relative bg-white py-6 px-6 rounded-3xl w-64 my-4 shadow-xl">
+            <div class=" text-white flex items-center absolute rounded-full py-4 px-4 shadow-xl bg-pink-500 right-4 -top-3">
                 <i class="fas fa-info-circle text-lg"></i>
-            </div>  -->
+            </div>
             <div class=" text-white flex items-center absolute rounded-full shadow-xl  right-4 ">
               <i class="fas fa-info-circle text-lg text-pink-300 hover:text-pink-500" />
             </div>
@@ -266,77 +266,49 @@
                 </button>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <div class="relative bg-white py-6 px-6 rounded-3xl w-64 my-4 shadow-xl">
-            <!-- <div class=" text-white flex items-center absolute rounded-full py-4 px-4 shadow-xl bg-pink-500 right-4 -top-3">
-                <i class="fas fa-info-circle text-lg"></i>
-            </div>  -->
-            <div class=" text-white flex items-center absolute rounded-full shadow-xl  right-4 ">
-              <i class="fas fa-info-circle text-lg text-pink-300 hover:text-pink-500" />
-            </div>
-            <div class="">
-              <p class="text-2xl font-bold">
-                網頁程式設計
-              </p>
-              <div class="flex space-x-2 text-gray-400 text-xs mb-3">
-                <p>#ACS20690</p>
-              </div>
+          <CourseCardSkeleton
+            v-for="item in 3"
+            v-show="$store.state.course.courses.length <= 0"
+            :key="item"
+          />
 
-              <div class="flex space-x-2 text-white text-xs my-3 font-semibold">
-                <div class="px-2 py-1 rounded-full bg-purple-500">
-                  <p>選修</p>
-                </div>
-                <div class="px-2 py-1 rounded-full bg-green-500">
-                  <p>3 學分</p>
-                </div>
-              </div>
-
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-graduation-cap transform translate-y-1" />
-                <p>資一甲</p>
-              </div>
-
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
-                <p>K208a</p>
-              </div>
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
-                <p>402 403 404</p>
-              </div>
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-chalkboard-teacher transform translate-y-1" />
-                <p>林嬿雯</p>
-              </div>
-
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-users transform translate-y-1" />
-                <div class="red-box-shadow w-full bg-grey-light rounded-full">
-                  <div
-                    class="bg-gradient-to-r from-yellow-500 to-red-500 rounded-full text-xs leading-none py-1 text-center text-white"
-                    style="width: 100%"
-                  >
-                    52/52
-                  </div>
-                </div>
-                <i class="fas fa-fire absolute right-3 text-red-500 transform -translate-y-1" />
-              </div>
-
-              <div class="border-t-2" />
-
-              <div class="flex">
-                <button class="mt-4 mx-1 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-400 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                  <i class="fas fa-calendar-plus mr-2 transform translate-y-0.5" />
-                  預約
-                </button>
-                <button class="mt-4 mx-1 group relative w-40 flex justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  <i class="fas fa-comments mr-2 transform translate-y-0.5" />
-                  評論
-                </button>
-              </div>
-            </div>
-          </div>
+          <CourseCard
+            v-for="course in $store.state.course.courses"
+            :key="(course.code + course.no + course.class)"
+          >
+            <template #name>
+              {{ course.name }}
+            </template>
+            <template #code>
+              {{ course.code }}
+            </template>
+            <template #sel>
+              {{ course.sel }}
+            </template>
+            <template #credit>
+              {{ course.credit }}
+            </template>
+            <template #class>
+              {{ course.class }}
+            </template>
+            <template #location>
+              {{ course.location }}
+            </template>
+            <template #time>
+              {{ course.time }}
+            </template>
+            <template #teacher>
+              {{ course.teacher }}
+            </template>
+            <template #selected_nums>
+              {{ course.selected_nums }}
+            </template>
+            <template #limit_nums>
+              {{ course.limit_nums }}
+            </template>
+          </CourseCard>
         </div>
       </div>
     </div>
@@ -344,17 +316,29 @@
 </template>
 
 <script>
+import CourseCard from '../components/CourseCard.vue'
+import CourseCardSkeleton from '../components/CourseCardSkeleton.vue'
 
 export default {
+    components: {
+        CourseCard,
+        CourseCardSkeleton
+    },
     data () {
         return {
-            courses: [
-                {
-                    txtYear: 110
-
-                }
-            ]
+            coursesMenu: {
+                txtYear: 110
+            }
         }
+    },
+    mounted () {
+        // this.$store.dispatch('http/get', {
+        //     api: 'course/108/1/A'
+        // }).then((data) => {
+        //     console.log(data)
+        // })
+        this.$store.dispatch('course/getAllCourseData')
+        console.log(this.$store.state.courses)
     }
 }
 </script>
