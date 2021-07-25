@@ -13,7 +13,7 @@
 
       <div class="flex space-x-2 text-white text-xs my-3 font-semibold">
         <div class="px-2 py-1 rounded-full bg-purple-500">
-          <p><slot name="sel" /></p>
+          <p><slot name="sel" />修</p>
         </div>
         <div class="px-2 py-1 rounded-full bg-green-500">
           <p><slot name="credit" /> 學分</p>
@@ -21,29 +21,64 @@
       </div>
 
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-graduation-cap transform translate-y-1" />
+        <i class="card-icon fas fa-graduation-cap transform translate-y-1" />
         <p><slot name="class" /></p>
       </div>
 
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
+        <i class="card-icon fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
         <p><slot name="location" /></p>
       </div>
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
+        <i class="card-icon far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
         <p><slot name="time" /></p>
       </div>
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-chalkboard-teacher transform translate-y-1" />
+        <i class="card-icon fas fa-chalkboard-teacher transform translate-y-1" />
         <p><slot name="teacher" /></p>
       </div>
 
-      <div class="flex space-x-2 text-gray-400 text-sm my-3">
+      <div
+        v-if="getNumsPercentage < 50"
+        class="flex space-x-2 text-gray-400 text-sm my-3"
+      >
+        <i class="card-icon fas fa-users transform translate-y-1" />
+        <div class="green-box-shadow w-full bg-grey-light rounded-full">
+          <div
+            class="progress-bar green-progress-bar rounded-full text-xs leading-none py-1 text-center text-white"
+            :style="'width:'+ (getNumsPercentage<=22?22:getNumsPercentage) + '%;'"
+          >
+            <slot name="selected_nums" />/<slot name="limit_nums" />
+          </div>
+        </div>
+        <i class="fas fa-wind absolute right-2 text-green-500 transform -translate-y-1 h-flip" />
+      </div>
+
+      <div
+        v-else-if="getNumsPercentage >= 50 && getNumsPercentage <= 90"
+        class="flex space-x-2 text-gray-400 text-sm my-3"
+      >
+        <i class="fas fa-users transform translate-y-1" />
+        <div class="blue-box-shadow w-full bg-grey-light rounded-full">
+          <div
+            class="progress-bar blue-progress-bar rounded-full text-xs leading-none py-1 text-center text-white"
+            :style="'width:'+ getNumsPercentage + '%;'"
+          >
+            <slot name="selected_nums" />/<slot name="limit_nums" />
+          </div>
+        </div>
+        <i class="fas fa-fill absolute right-2 text-blue-500 transform -translate-y-1 h-flip" />
+      </div>
+
+      <div
+        v-else
+        class="flex space-x-2 text-gray-400 text-sm my-3"
+      >
         <i class="fas fa-users transform translate-y-1" />
         <div class="red-box-shadow w-full bg-grey-light rounded-full">
           <div
-            class="bg-gradient-to-r from-yellow-500 to-red-500 rounded-full text-xs leading-none py-1 text-center text-white"
-            style="width: 100%"
+            class="progress-bar red-progress-bar rounded-full text-xs leading-none py-1 text-center text-white"
+            :style="'width:'+ (getNumsPercentage>100?100:getNumsPercentage) + '%;'"
           >
             <slot name="selected_nums" />/<slot name="limit_nums" />
           </div>
@@ -69,10 +104,73 @@
 
 <script>
 export default {
-
+    props: {
+        selectedNums: {
+            type: Number,
+            default: 0
+        },
+        limitNums: {
+            type: Number,
+            default: 1
+        }
+    },
+    computed: {
+        getNumsPercentage () {
+            return Math.round((this.selectedNums / this.limitNums) * 100)
+        }
+    }
 }
 </script>
 
-<style>
+<style scoped>
+.card-icon{
+  flex: 0 0 18px;
+}
+.green-box-shadow{
+  box-shadow: 5px 4px 12px 0px rgb(38 193 79 / 50%);
+}
+.blue-box-shadow{
+  box-shadow: 5px 4px 12px 0px rgb(40 126 255 / 50%);
+}
+.red-box-shadow{
+  box-shadow: 5px 4px 12px 0px rgb(255 111 40 / 50%);
+}
+.h-flip{
+  transform:scaleX(-1);
+}
 
+.green-progress-bar{
+  background: linear-gradient(90deg,#33D197,#1AB17F 25%,#07986B 51%,#33D197 75%, #1AB17F);
+}
+
+.blue-progress-bar{
+  background: linear-gradient(90deg,#3292ff,#1582ff 25%,hsl(202, 100%, 65%) 51%,#3292ff 75%, #1582ff);
+}
+
+.red-progress-bar{
+  background: linear-gradient(90deg,#F59D0C,#F4851C 17%,#F16331 34%,#EF4543 51%,#F59D0C 68%, #F4851C 85%,#F16331);
+}
+
+.progress-bar{
+  background-size: 300% 100%;
+  -webkit-animation: progress-animation 2s linear infinite;
+          animation: progress-animation 2s linear infinite;
+}
+@-webkit-keyframes progress-animation {
+  0% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 0;
+  }
+}
+
+@keyframes progress-animation {
+  0% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 0;
+  }
+}
 </style>

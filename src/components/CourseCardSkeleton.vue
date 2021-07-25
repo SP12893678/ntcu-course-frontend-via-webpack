@@ -4,25 +4,25 @@
       <div class="h-6 bg-gray-300 rounded-full w-3/6" />
 
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-graduation-cap transform translate-y-1" />
+        <i class="card-icon fas fa-graduation-cap transform translate-y-1" />
         <div class="h-4 bg-gray-300 rounded-full w-5/6 mt-1" />
       </div>
 
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
+        <i class="card-icon fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
         <div class="h-4 bg-gray-300 rounded-full w-3/6 mt-1" />
       </div>
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
+        <i class="card-icon far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
         <div class="h-4 bg-gray-300 rounded-full w-8/12 mt-1" />
       </div>
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-chalkboard-teacher transform translate-y-1" />
+        <i class="card-icon fas fa-chalkboard-teacher transform translate-y-1" />
         <div class="h-4 bg-gray-300 rounded-full w-5/12 mt-1" />
       </div>
 
       <div class="flex space-x-2 text-gray-400 text-sm my-3">
-        <i class="fas fa-users transform translate-y-1" />
+        <i class="card-icon fas fa-users transform translate-y-1" />
         <div class="h-4 bg-gray-300 rounded-full w-9/12 mt-1" />
       </div>
 
@@ -43,6 +43,9 @@ export default {
 </script>
 
 <style>
+.card-icon{
+  flex: 0 0 18px;
+}
 .skeleton-box {
   position: relative;
   overflow: hidden;

@@ -1,7 +1,7 @@
 <template>
   <div class="md:flex flex-col md:flex-row md:min-h-screen w-full">
     <div
-      class="flex flex-col w-full md:w-64 text-gray-300 bg-gray-800 dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0"
+      class=" h-screen fixed z-50 flex flex-col w-full md:w-64 text-gray-300 bg-gray-800 dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0"
       x-data="{ open: false }"
     >
       <div class="bg-gray-900 flex-shrink-0 px-8 py-4 flex flex-row items-center justify-between">
@@ -41,15 +41,15 @@
               class="block text-sm font-medium text-gray-300"
             >學年</label>
             <select
-              id="country"
-              name="country"
-              autocomplete="country"
+              v-model="courseMenu.year"
               class="text-gray-700 mt-1 block w-full py-2 px-3 border border-gray-700 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option>110</option>
-              <option>109</option>
-              <option>108</option>
-              <option>107</option>
+              <option
+                v-for="year in $store.state.course.year"
+                :key="year"
+              >
+                {{ year }}
+              </option>
             </select>
           </div>
 
@@ -59,34 +59,36 @@
               class="block text-sm font-medium text-gray-300"
             >學期</label>
             <select
-              id="country"
-              name="country"
-              autocomplete="country"
+              v-model="courseMenu.term"
               class="text-gray-700 mt-1 block w-full py-2 px-3 border border-gray-700 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option>第一學期</option>
-              <option>第二學期</option>
-              <option>寒假</option>
-              <option>暑假</option>
+              <option
+                v-for="term in $store.state.course.term"
+                :key="term.value"
+                :value="term"
+              >
+                {{ term.name }}
+              </option>
             </select>
           </div>
         </div>
 
         <div class="mt-4">
           <label
-            for="country"
             class="block text-sm font-medium text-gray-300"
           >學制</label>
           <select
-            id="country"
-            name="country"
-            autocomplete="country"
+            v-model="courseMenu.ddlEdu"
             class="text-gray-700 mt-1 block w-full py-2 px-3 border border-gray-700 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            @change="onChangeDdlEdu"
           >
-            <option>學士</option>
-            <option>碩士班</option>
-            <option>博士班</option>
-            <option>虛擬學制</option>
+            <option
+              v-for="option in getDdlEduOption"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.text }}
+            </option>
           </select>
         </div>
 
@@ -96,15 +98,20 @@
             class="block text-sm font-medium text-gray-300"
           >學系</label>
           <select
-            id="country"
-            name="country"
-            autocomplete="country"
+            v-model="courseMenu.ddlDept"
             class="text-gray-700 mt-1 block w-full py-2 px-3 border border-gray-700 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            @change="onChangeDdlDept"
           >
-            <option>ACS 資訊工程學系</option>
-            <option>AAR 美術學系</option>
-            <option>ACA 諮商與應用心理學系</option>
-            <option>ACC 文化創意產業設計與營運學系</option>
+            <option value="0">
+              全部
+            </option>
+            <option
+              v-for="option in getDdlDeptOption"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.text }}
+            </option>
           </select>
         </div>
 
@@ -114,15 +121,19 @@
             class="block text-sm font-medium text-gray-300"
           >班級</label>
           <select
-            id="country"
-            name="country"
-            autocomplete="country"
+            v-model="courseMenu.ddlClass"
             class="text-gray-700 mt-1 block w-full py-2 px-3 border border-gray-700 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
-            <option>資一甲</option>
-            <option>資二甲</option>
-            <option>資三甲</option>
-            <option>資四甲</option>
+            <option value="0">
+              全部
+            </option>
+            <option
+              v-for="option in getDdlClassOption"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.text }}
+            </option>
           </select>
         </div>
 
@@ -141,36 +152,31 @@
               class="sr-only"
             >(etc.課程名稱、任課教師、上課時間、上課地點)</label>
             <input
-              id="email-address"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
+              v-model="courseMenu.searchInput"
+              type="text"
               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="課程、教師、時間、地點)"
             >
 
-            <button class="ml-2 group relative w-12 flex justify-center items-center border border-transparent font-medium rounded-md text-xl text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <button
+              class="ml-2 group relative w-12 flex justify-center items-center border border-transparent font-medium rounded-md text-xl text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              @click="addKeyWord"
+            >
               ＋
             </button>
           </div>
         </div>
-
         <div class="mt-4 bg-gray-50 w-full h-36 rounded-md table-border px-1.5 py-2">
-          <label
-            for=""
-            class=" bg-blue-400 rounded-md px-1.5 py-1 text-xs text-white mx-1"
-          >
-            K207a
-            <i class="fas fa-times ml-1" />
-          </label>
-          <label
-            for=""
-            class=" bg-red-300 rounded-md px-1.5 py-1 text-xs text-white mx-1"
-          >
-            王讚彬
-            <i class="fas fa-times ml-1" />
-          </label>
+          <vue-scroll>
+            <label
+              v-for="(keyWord,index) in courseMenu.keyWords"
+              :key="(keyWord+index)"
+              :class="colorSet[index%colorSet.length] +' rounded-md px-1.5 py-1 text-xs text-white mx-1  inline-block mt-2'"
+            >
+              {{ keyWord }}
+              <i class="fas fa-times ml-1" />
+            </label>
+          </vue-scroll>
         </div>
       </div>
 
@@ -194,141 +200,127 @@
       </div>
     </div>
 
-    <div class="w-full bg-gradient-to-r from-gray-100 to-gray-400">
-      <div class="flex items-center justify-center mt-4">
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
-          <!-- 1 card -->
-          <!-- <div class="relative bg-white py-6 px-6 rounded-3xl w-64 my-4 shadow-xl">
-            <div class=" text-white flex items-center absolute rounded-full py-4 px-4 shadow-xl bg-pink-500 right-4 -top-3">
-                <i class="fas fa-info-circle text-lg"></i>
-            </div>
-            <div class=" text-white flex items-center absolute rounded-full shadow-xl  right-4 ">
-              <i class="fas fa-info-circle text-lg text-pink-300 hover:text-pink-500" />
-            </div>
-            <div class="">
-              <p class="text-2xl font-bold">
-                計算機網路
-              </p>
-              <div class="flex space-x-2 text-gray-400 text-xs mb-3">
-                <p>#ACS00180</p>
-              </div>
-
-              <div class="flex space-x-2 text-white text-xs my-3 font-semibold">
-                <div class="px-2 py-1 rounded-full bg-yellow-500">
-                  <p>必修</p>
-                </div>
-                <div class="px-2 py-1 rounded-full bg-green-500">
-                  <p>3 學分</p>
-                </div>
-              </div>
-
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-graduation-cap transform translate-y-1" />
-                <p>資一甲</p>
-              </div>
-
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
-                <p>K207a</p>
-              </div>
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
-                <p>106 107 108</p>
-              </div>
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-chalkboard-teacher transform translate-y-1" />
-                <p>王讚彬</p>
-              </div>
-
-              <div class="flex space-x-2 text-gray-400 text-sm my-3">
-                <i class="fas fa-users transform translate-y-1" />
-                <div class="box-shadow w-full bg-grey-light rounded-full">
-                  <div
-                    class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-full text-xs leading-none py-1 text-center text-white"
-                    style="width: 75%"
-                  >
-                    52/70
-                  </div>
-                </div>
-                <i class="fas fa-fill absolute right-2 text-blue-500 transform -translate-y-1 h-flip" />
-              </div>
-
-              <div class="border-t-2" />
-
-              <div class="flex">
-                <button class="mt-4 mx-1 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-400 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                  <i class="fas fa-calendar-plus mr-2 transform translate-y-0.5" />
-                  預約
-                </button>
-                <button class="mt-4 mx-1 group relative w-40 flex justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  <i class="fas fa-comments mr-2 transform translate-y-0.5" />
-                  評論
-                </button>
-              </div>
-            </div>
-          </div> -->
-
-          <CourseCardSkeleton
-            v-for="item in 3"
-            v-show="$store.state.course.courses.length <= 0"
-            :key="item"
-          />
-
-          <CourseCard
-            v-for="course in $store.state.course.courses"
-            :key="(course.code + course.no + course.class)"
-          >
-            <template #name>
-              {{ course.name }}
-            </template>
-            <template #code>
-              {{ course.code }}
-            </template>
-            <template #sel>
-              {{ course.sel }}
-            </template>
-            <template #credit>
-              {{ course.credit }}
-            </template>
-            <template #class>
-              {{ course.class }}
-            </template>
-            <template #location>
-              {{ course.location }}
-            </template>
-            <template #time>
-              {{ course.time }}
-            </template>
-            <template #teacher>
-              {{ course.teacher }}
-            </template>
-            <template #selected_nums>
-              {{ course.selected_nums }}
-            </template>
-            <template #limit_nums>
-              {{ course.limit_nums }}
-            </template>
-          </CourseCard>
+    <div class=" pl-64 w-full bg-gradient-to-r from-gray-100 to-gray-400 relative h-screen">
+      <vue-scroll>
+        <!-- view mode -->
+        <div class="flex absolute top-4 right-4 rounded-lg bg-gray-200 shadow-lg">
+          <div class="px-4 py-2 rounded-l-lg text-gray-800">
+            <i class="fas fa-grip-horizontal fa-lg" />
+          </div>
+          <div class="px-4 py-2 rounded-r-lg bg-gray-300 inner-shadow hover:bg-gray-100">
+            <i class="fas fa-list fa-lg text-gray-800" />
+          </div>
         </div>
-      </div>
+        <Pagination />
+        <!-- <CourseListTable class="mx-4" /> -->
+        <div class="flex items-center justify-center mt-4">
+          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+            <CourseCardSkeleton
+              v-for="item in 3"
+              v-show="$store.state.course.courses.length <= 0"
+              :key="item"
+            />
+
+            <CourseCard
+              v-for="course in getFitCourses"
+              :key="(course.code + course.no + course.class)"
+              :limit-nums="course.limit_nums"
+              :selected-nums="course.selected_nums"
+            >
+              <template #name>
+                {{ course.name }}
+              </template>
+              <template #code>
+                {{ course.code }}
+              </template>
+              <template #sel>
+                {{ course.sel }}
+              </template>
+              <template #credit>
+                {{ course.credit }}
+              </template>
+              <template #class>
+                {{ course.class }}
+              </template>
+              <template #location>
+                {{ course.location }}
+              </template>
+              <template #time>
+                {{ course.time }}
+              </template>
+              <template #teacher>
+                {{ course.teacher }}
+              </template>
+              <template #selected_nums>
+                {{ course.selected_nums }}
+              </template>
+              <template #limit_nums>
+                {{ course.limit_nums }}
+              </template>
+            </CourseCard>
+          </div>
+        </div>
+      </vue-scroll>
     </div>
   </div>
 </template>
 
 <script>
 import CourseCard from '../components/CourseCard.vue'
+import CourseListTable from '../components/CourseListTable.vue'
 import CourseCardSkeleton from '../components/CourseCardSkeleton.vue'
+import Pagination from '../components/Pagination.vue'
 
 export default {
     components: {
         CourseCard,
-        CourseCardSkeleton
+        CourseListTable,
+        CourseCardSkeleton,
+        Pagination
     },
     data () {
         return {
-            coursesMenu: {
-                txtYear: 110
-            }
+            courseMenu: {
+                year: 108,
+                term: { value: 1, name: '第一學期' },
+                ddlEdu: 'A',
+                ddlDept: 0,
+                ddlClass: 0,
+                searchInput: '',
+                keyWords: []
+            },
+            viewMode: 'card',
+            colorSet: ['bg-red-300', 'bg-yellow-300', 'bg-green-300', 'bg-blue-400', 'bg-purple-300', 'bg-pink-300']
+        }
+    },
+    computed: {
+        getDdlEduOption () {
+            const course = this.$store.state.course
+            const ddlEduOption = course.courseOptions.find(option => {
+                return option.year == this.courseMenu.year && option.term == this.courseMenu.term.value
+            })
+            if (ddlEduOption == undefined) return null
+            return ddlEduOption.ddlEdu
+        },
+        getDdlDeptOption () {
+            if (this.getDdlEduOption == null) return []
+            const ddlEdu = this.getDdlEduOption.find(item => item.value == this.courseMenu.ddlEdu)
+            return (ddlEdu != undefined) ? ddlEdu.ddlDept : []
+        },
+        getDdlClassOption () {
+            if (this.getDdlDeptOption == null) return []
+            const ddlEdu = this.getDdlDeptOption.find(item => item.value == this.courseMenu.ddlDept)
+            return (ddlEdu != undefined) ? ddlEdu.ddlClass : []
+        },
+        getFitCourses () {
+            const courses = this.$store.state.course.courses
+            return courses.filter(course => {
+                return course.year == this.courseMenu.year &&
+                  course.term == this.courseMenu.term.value &&
+                  course.ddl_edu == this.courseMenu.ddlEdu &&
+                  (course.ddl_dept == this.courseMenu.ddlDept || this.courseMenu.ddlDept == 0) &&
+                  (course.ddl_class == this.courseMenu.ddl_class || this.courseMenu.ddlClass == 0)
+            })
         }
     },
     mounted () {
@@ -338,25 +330,33 @@ export default {
         //     console.log(data)
         // })
         this.$store.dispatch('course/getAllCourseData')
+        this.$store.dispatch('course/getCourseOptions')
+
         console.log(this.$store.state.courses)
+    },
+    methods: {
+        onChangeDdlEdu () {
+            this.courseMenu.ddlDept = 0
+            this.courseMenu.ddlClass = 0
+        },
+        onChangeDdlDept () {
+            this.courseMenu.ddlClass = 0
+        },
+        addKeyWord () {
+            if (this.courseMenu.searchInput.trim().length <= 0) return
+            if (this.courseMenu.keyWords.length >= 6) return
+            this.courseMenu.keyWords.push(this.courseMenu.searchInput)
+        }
     }
 }
 </script>
 
 <style>
-.box-shadow{
-  box-shadow: 5px 4px 12px 0px rgb(40 126 255 / 50%);
-}
-.red-box-shadow{
-  box-shadow: 5px 4px 12px 0px rgb(255 111 40 / 50%);
-}
-
 .table-border{
   background-image: linear-gradient(90deg,rgba(60,10,30,.04) 6%,transparent 0),linear-gradient(1turn,rgba(60,10,30,.04) 6%,transparent 0);
   background-size: 15px 15px;
 }
-
-.h-flip{
-  transform:scaleX(-1);
+.inner-shadow{
+  box-shadow: inset 0 0 6px #b1b1b1;
 }
 </style>
