@@ -22,3 +22,16 @@
 body{
     font-family: 'Noto Sans TC', sans-serif;
 }
+
+tbody > tr > td{
+    border:1px solid #888;
+}
+
+td tbody > tr > td{
+    border:0px solid #000;
+}
+
+table {
+    border: 0;
+    border-collapse: collapse;
+  }

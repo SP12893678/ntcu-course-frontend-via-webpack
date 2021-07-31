@@ -5,7 +5,7 @@
   >
     <!-- This example requires Tailwind CSS v2.0+ -->
     <div
-      class="fixed z-10 inset-0 overflow-y-auto"
+      class="fixed z-9999 inset-0 overflow-y-auto"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -123,5 +123,8 @@ export default {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+.z-9999{
+  z-index: 9999;
 }
 </style>

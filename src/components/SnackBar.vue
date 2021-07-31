@@ -7,6 +7,7 @@
     <transition
       v-if="$store.state.snackBar.show"
       name="bounce"
+      appear
     >
       <div class=" mb-3 h-12 min-w-200 flex text-white bg-gray-700 shadow-md rounded-md pointer-events-auto">
         <div class="flex items-center px-2 py-3 justify-between flex-1">
@@ -54,10 +55,10 @@ export default {
     min-width: 200px;
 }
 .bounce-enter-active {
-  animation: bounce-in .5s;
+  animation: bounce-in .3s;
 }
 .bounce-leave-active {
-  animation: bounce-out .5s;
+  animation: bounce-out .3s;
 }
 @keyframes bounce-in {
   0% {

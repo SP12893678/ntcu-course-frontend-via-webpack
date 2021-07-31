@@ -6,7 +6,8 @@ const initState = function () {
         term: [
             { value: 1, name: '第一學期' },
             { value: 2, name: '第二學期' }
-        ]
+        ],
+        coursesDetail: []
     }
 }
 const state = initState()
@@ -41,6 +42,18 @@ const actions = {
                 }
             })
         })
+    },
+    getCourseDetail ({ dispatch, commit, state }, courseID) {
+        return new Promise((resolve, reject) => {
+            dispatch('http/get', { api: `course/detail/${courseID}` }, { root: true }).then(res => {
+                if (res.status == '1') {
+                    commit('setCourseDetail', res.data)
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            })
+        })
     }
 }
 
@@ -55,6 +68,9 @@ const mutations = {
     },
     setOptionYear (state, value) {
         state.year = [...new Set(value.map(item => item.year))]
+    },
+    setCourseDetail (state, value) {
+        state.coursesDetail.push(value)
     },
     reset (state) {
         state = Object.assign(state, initState())

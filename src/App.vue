@@ -20,7 +20,9 @@ export default {
         }
     },
     mounted () {
-
+        // addEventListener('keydown', () => {
+        //     this.$store.commit('dialogBox', { dialog: true }, { root: true })
+        // })
     }
 }
 </script>

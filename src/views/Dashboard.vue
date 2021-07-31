@@ -233,11 +233,48 @@
               v-for="course in getPageCourse"
               :key="(course.code + course.no + course.class)"
               :course="course"
+              @clickReviewEvent="openReviewPanel(course.id)"
+              @clickDetailEvent="openDetailPanel(course.id)"
             />
           </div>
         </div>
       </vue-scroll>
     </div>
+
+    <transition
+      v-if="detailPanel.show"
+      name="fade"
+      appear
+    >
+      <div
+        class="fixed w-full h-full bg-black bg-opacity-30 z-50"
+      >
+        <div
+          class="flex justify-center items-center w-full h-full"
+          @click.self="closeDetailPanel"
+        >
+          <div class="w-11/12 h-5/6 bg-white rounded-lg">
+            <div class="flex justify-between items-center">
+              <div class="px-2 py-2 font-semibold text-lg">
+                課程詳細資料
+              </div>
+              <div
+                class="px-2 mr-2 hover:bg-gray-100 rounded-full"
+                @click="closeDetailPanel"
+              >
+                <i class="fas fa-times" />
+              </div>
+            </div>
+
+            <div class=" w-full h-full rounded-b-lg">
+              <vue-scroll class="rounded-b-lg">
+                <div v-html="detailPanel.content" />
+              </vue-scroll>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -273,6 +310,10 @@ export default {
             perPageNums: 12,
             paginationTemplate: {
                 template: MyPagination
+            },
+            detailPanel: {
+                show: false,
+                content: ''
             }
         }
     },
@@ -350,12 +391,26 @@ export default {
         },
         resetPage () {
             this.page = 1
+        },
+        openDetailPanel (courseID) {
+            console.log(courseID)
+            this.$store.dispatch('course/getCourseDetail', courseID).then(res => {
+                const courseDetail = this.$store.state.course.coursesDetail.find(course => course.id == courseID)
+                this.detailPanel.content = courseDetail.content
+                this.detailPanel.show = true
+            })
+        },
+        closeDetailPanel () {
+            this.detailPanel.show = false
+        },
+        openReviewPanel (courseID) {
+            console.log(1)
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
 .table-border{
   background-image: linear-gradient(90deg,rgba(60,10,30,.04) 6%,transparent 0),linear-gradient(1turn,rgba(60,10,30,.04) 6%,transparent 0);
   background-size: 15px 15px;
@@ -363,4 +418,11 @@ export default {
 .inner-shadow{
   box-shadow: inset 0 0 6px #b1b1b1;
 }
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .3s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+    opacity: 0
+}
+
 </style>

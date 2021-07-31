@@ -11,7 +11,7 @@
         <p>#{{ course.code }}</p>
       </div>
 
-      <div class="flex space-x-2 text-white text-xs my-3 font-semibold">
+      <div class="flex space-x-2 text-white text-xs my-3 font-medium">
         <div class="px-2 py-1 rounded-full bg-purple-500">
           <p>{{ course.sel }}修</p>
         </div>
@@ -129,11 +129,17 @@
       <div class="border-t-2" />
 
       <div class="flex">
-        <button class="mt-4 mx-1 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600">
+        <button
+          class="mt-4 mx-1 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600"
+          @click="detailEvent"
+        >
           <i class="fas fa-info-circle  mr-2 transform translate-y-0.5" />
           詳細資料
         </button>
-        <button class="mt-4 mx-1 group relative w-40 flex justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <button
+          class="mt-4 mx-1 group relative w-40 flex justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          @click="reivewEvent"
+        >
           <i class="fas fa-comments mr-2 transform translate-y-0.5" />
           評論
         </button>
@@ -161,6 +167,12 @@ export default {
         },
         onError (e) {
             this.$store.commit('snackBar', { show: true, message: 'Failed!' }, { root: true })
+        },
+        detailEvent () {
+            this.$emit('clickDetailEvent')
+        },
+        reivewEvent () {
+            this.$emit('clickReviewEvent')
         }
     }
 }
