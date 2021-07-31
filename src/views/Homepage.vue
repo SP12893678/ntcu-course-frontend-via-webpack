@@ -305,7 +305,7 @@
     <main class="h-full flex flex-1 bg-gradient-to-r from-blue-400 to-purple-400">
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 my-auto">
         <div class="flex sm:space-x-8 md:space-x-16 space-x-32">
-          <div class=" relative text-4xl text-white border rounded-2xl px-6 py-6 Super ">
+          <div class=" relative text-4xl text-white border rounded-2xl px-6 py-6 MajorMonoDisplay ">
             <div class="flex text-5xl">
               <h1>N</h1>
               <h1>T</h1>
@@ -362,11 +362,7 @@ export default {
 }
 
 .MajorMonoDisplay{
-  font-family: 'MajorMonoDisplay', sans-serif;
-}
-
-.Super{
-  font-family: 'Super', sans-serif;
+  font-family: 'MajorMonoDisplay', sans-serif !important;
 }
 
 .stroke{

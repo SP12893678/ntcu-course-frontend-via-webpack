@@ -21,12 +21,20 @@ const store = new Vuex.Store({
         dialogBox: {
             dialog: false,
             option: {}
+        },
+        snackBar: {
+            show: false,
+            message: ''
         }
     },
     mutations: {
         dialogBox (state, value) {
             state.dialogBox.dialog = value.dialog
             Object.assign(state.dialogBox.option, (value.option) ? value.option : {})
+        },
+        snackBar (state, value) {
+            state.snackBar.show = value.show
+            state.snackBar.message = value.message
         },
         increment (state) {
             state.count++

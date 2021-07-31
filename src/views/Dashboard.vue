@@ -174,7 +174,10 @@
               :class="colorSet[index%colorSet.length] +' rounded-md px-1.5 py-1 text-xs text-white mx-1  inline-block mt-2'"
             >
               {{ keyWord }}
-              <i class="fas fa-times ml-1" />
+              <i
+                class="fas fa-times ml-1 cursor-pointer"
+                @click="removeKeyWord(keyWord)"
+              />
             </label>
           </vue-scroll>
         </div>
@@ -211,7 +214,12 @@
             <i class="fas fa-list fa-lg text-gray-800" />
           </div>
         </div>
-        <Pagination />
+        <Pagination
+          v-model="page"
+          :records="getFitCourses.length"
+          :per-page="perPageNums"
+          :options="paginationTemplate"
+        />
         <!-- <CourseListTable class="mx-4" /> -->
         <div class="flex items-center justify-center mt-4">
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
@@ -222,42 +230,10 @@
             />
 
             <CourseCard
-              v-for="course in getFitCourses"
+              v-for="course in getPageCourse"
               :key="(course.code + course.no + course.class)"
-              :limit-nums="course.limit_nums"
-              :selected-nums="course.selected_nums"
-            >
-              <template #name>
-                {{ course.name }}
-              </template>
-              <template #code>
-                {{ course.code }}
-              </template>
-              <template #sel>
-                {{ course.sel }}
-              </template>
-              <template #credit>
-                {{ course.credit }}
-              </template>
-              <template #class>
-                {{ course.class }}
-              </template>
-              <template #location>
-                {{ course.location }}
-              </template>
-              <template #time>
-                {{ course.time }}
-              </template>
-              <template #teacher>
-                {{ course.teacher }}
-              </template>
-              <template #selected_nums>
-                {{ course.selected_nums }}
-              </template>
-              <template #limit_nums>
-                {{ course.limit_nums }}
-              </template>
-            </CourseCard>
+              :course="course"
+            />
           </div>
         </div>
       </vue-scroll>
@@ -269,7 +245,9 @@
 import CourseCard from '../components/CourseCard.vue'
 import CourseListTable from '../components/CourseListTable.vue'
 import CourseCardSkeleton from '../components/CourseCardSkeleton.vue'
-import Pagination from '../components/Pagination.vue'
+// import Pagination from '../components/Pagination.vue'
+import Pagination from 'vue-pagination-2'
+import MyPagination from '../components/MyPagination.vue'
 
 export default {
     components: {
@@ -289,8 +267,13 @@ export default {
                 searchInput: '',
                 keyWords: []
             },
+            colorSet: ['bg-red-300', 'bg-yellow-300', 'bg-green-300', 'bg-blue-400', 'bg-purple-300', 'bg-pink-300'],
             viewMode: 'card',
-            colorSet: ['bg-red-300', 'bg-yellow-300', 'bg-green-300', 'bg-blue-400', 'bg-purple-300', 'bg-pink-300']
+            page: 1,
+            perPageNums: 12,
+            paginationTemplate: {
+                template: MyPagination
+            }
         }
     },
     computed: {
@@ -315,12 +298,22 @@ export default {
         getFitCourses () {
             const courses = this.$store.state.course.courses
             return courses.filter(course => {
-                return course.year == this.courseMenu.year &&
-                  course.term == this.courseMenu.term.value &&
-                  course.ddl_edu == this.courseMenu.ddlEdu &&
-                  (course.ddl_dept == this.courseMenu.ddlDept || this.courseMenu.ddlDept == 0) &&
-                  (course.ddl_class == this.courseMenu.ddl_class || this.courseMenu.ddlClass == 0)
+                const isFitYear = course.year == this.courseMenu.year
+                const isFitTerm = course.term == this.courseMenu.term.value
+                const isFitDdlEdu = course.ddl_edu == this.courseMenu.ddlEdu
+                const isFitDdlDept = (course.ddl_dept == this.courseMenu.ddlDept || this.courseMenu.ddlDept == 0)
+                const isFitDdlClass = (course.ddl_class == this.courseMenu.ddlClass || this.courseMenu.ddlClass == 0)
+
+                const courseString = JSON.stringify(course).toLowerCase()
+                const keyWords = this.courseMenu.keyWords
+                const isFitKeyWords = !keyWords.length || keyWords.every(keyword => courseString.includes(keyword.toLowerCase()))
+                const Fits = [isFitYear, isFitTerm, isFitTerm, isFitDdlEdu, isFitDdlDept, isFitDdlClass, isFitKeyWords]
+                return !Fits.includes(false)
             })
+        },
+        getPageCourse () {
+            const fitCourse = this.getFitCourses
+            return fitCourse.slice((0 + this.perPageNums * (this.page - 1)), this.perPageNums * (this.page))
         }
     },
     mounted () {
@@ -338,14 +331,25 @@ export default {
         onChangeDdlEdu () {
             this.courseMenu.ddlDept = 0
             this.courseMenu.ddlClass = 0
+            this.resetPage()
         },
         onChangeDdlDept () {
             this.courseMenu.ddlClass = 0
+            this.resetPage()
         },
         addKeyWord () {
             if (this.courseMenu.searchInput.trim().length <= 0) return
             if (this.courseMenu.keyWords.length >= 6) return
             this.courseMenu.keyWords.push(this.courseMenu.searchInput)
+            this.courseMenu.searchInput = ''
+            this.resetPage()
+        },
+        removeKeyWord (index) {
+            this.courseMenu.keyWords.splice(index, 1)
+            this.resetPage()
+        },
+        resetPage () {
+            this.page = 1
         }
     }
 }

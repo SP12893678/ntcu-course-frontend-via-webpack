@@ -5,37 +5,77 @@
     </div>
     <div class="">
       <p class="text-xl font-bold truncate ">
-        <slot name="name" />
+        {{ course.name }}
       </p>
       <div class="flex space-x-2 text-gray-400 text-xs mb-3">
-        <p>#<slot name="code" /></p>
+        <p>#{{ course.code }}</p>
       </div>
 
       <div class="flex space-x-2 text-white text-xs my-3 font-semibold">
         <div class="px-2 py-1 rounded-full bg-purple-500">
-          <p><slot name="sel" />修</p>
+          <p>{{ course.sel }}修</p>
         </div>
         <div class="px-2 py-1 rounded-full bg-green-500">
-          <p><slot name="credit" /> 學分</p>
+          <p>{{ course.credit }} 學分</p>
         </div>
       </div>
 
-      <div class="flex space-x-2 text-gray-400 text-sm my-3">
+      <div
+        v-clipboard:copy="course.class"
+        v-clipboard:success="onCopy"
+        v-clipboard:error="onError"
+        class="group flex space-x-2 text-gray-400 text-sm my-3"
+      >
         <i class="card-icon fas fa-graduation-cap transform translate-y-1" />
-        <p><slot name="class" /></p>
+        <p class="flex-1">
+          {{ course.class }}
+        </p>
+        <div class="opacity-0 group-hover:opacity-100">
+          <i class="card-icon fas fa-copy hover:text-gray-300" />
+        </div>
       </div>
 
-      <div class="flex space-x-2 text-gray-400 text-sm my-3">
+      <div
+        v-clipboard:copy="course.location"
+        v-clipboard:success="onCopy"
+        v-clipboard:error="onError"
+        class="group flex space-x-2 text-gray-400 text-sm my-3"
+      >
         <i class="card-icon fas fa-map-marker-alt transform translate-y-1 translate-x-0.5 pr-2" />
-        <p><slot name="location" /></p>
+        <p class="flex-1">
+          {{ course.location }}
+        </p>
+        <div class="opacity-0 group-hover:opacity-100">
+          <i class="card-icon fas fa-copy hover:text-gray-300" />
+        </div>
       </div>
-      <div class="flex space-x-2 text-gray-400 text-sm my-3">
+      <div
+        v-clipboard:copy="course.time"
+        v-clipboard:success="onCopy"
+        v-clipboard:error="onError"
+        class="group flex space-x-2 text-gray-400 text-sm my-3"
+      >
         <i class="card-icon far fa-calendar-minus transform translate-y-1 translate-x-0.5 pr-1" />
-        <p><slot name="time" /></p>
+        <p class="flex-1">
+          {{ course.time }}
+        </p>
+        <div class="opacity-0 group-hover:opacity-100">
+          <i class="card-icon fas fa-copy hover:text-gray-300" />
+        </div>
       </div>
-      <div class="flex space-x-2 text-gray-400 text-sm my-3">
+      <div
+        v-clipboard:copy="course.teacher"
+        v-clipboard:success="onCopy"
+        v-clipboard:error="onError"
+        class="group flex space-x-2 text-gray-400 text-sm my-3"
+      >
         <i class="card-icon fas fa-chalkboard-teacher transform translate-y-1" />
-        <p><slot name="teacher" /></p>
+        <p class="flex-1">
+          {{ course.teacher }}
+        </p>
+        <div class="opacity-0 group-hover:opacity-100">
+          <i class="card-icon fas fa-copy hover:text-gray-300" />
+        </div>
       </div>
 
       <div
@@ -48,7 +88,7 @@
             class="progress-bar green-progress-bar rounded-full text-xs leading-none py-1 text-center text-white"
             :style="'width:'+ (getNumsPercentage<=22?22:getNumsPercentage) + '%;'"
           >
-            <slot name="selected_nums" />/<slot name="limit_nums" />
+            {{ course.selected_nums }}/{{ course.limit_nums }}
           </div>
         </div>
         <i class="fas fa-wind absolute right-2 text-green-500 transform -translate-y-1 h-flip" />
@@ -64,7 +104,7 @@
             class="progress-bar blue-progress-bar rounded-full text-xs leading-none py-1 text-center text-white"
             :style="'width:'+ getNumsPercentage + '%;'"
           >
-            <slot name="selected_nums" />/<slot name="limit_nums" />
+            {{ course.selected_nums }}/{{ course.limit_nums }}
           </div>
         </div>
         <i class="fas fa-fill absolute right-2 text-blue-500 transform -translate-y-1 h-flip" />
@@ -80,7 +120,7 @@
             class="progress-bar red-progress-bar rounded-full text-xs leading-none py-1 text-center text-white"
             :style="'width:'+ (getNumsPercentage>100?100:getNumsPercentage) + '%;'"
           >
-            <slot name="selected_nums" />/<slot name="limit_nums" />
+            {{ course.selected_nums }}/{{ course.limit_nums }}
           </div>
         </div>
         <i class="fas fa-fire absolute right-3 text-red-500 transform -translate-y-1" />
@@ -89,9 +129,9 @@
       <div class="border-t-2" />
 
       <div class="flex">
-        <button class="mt-4 mx-1 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-400 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-          <i class="fas fa-calendar-plus mr-2 transform translate-y-0.5" />
-          預約
+        <button class="mt-4 mx-1 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-500 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600">
+          <i class="fas fa-info-circle  mr-2 transform translate-y-0.5" />
+          詳細資料
         </button>
         <button class="mt-4 mx-1 group relative w-40 flex justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
           <i class="fas fa-comments mr-2 transform translate-y-0.5" />
@@ -105,18 +145,22 @@
 <script>
 export default {
     props: {
-        selectedNums: {
-            type: Number,
-            default: 0
-        },
-        limitNums: {
-            type: Number,
-            default: 1
+        course: {
+            type: Object,
+            default: null
         }
     },
     computed: {
         getNumsPercentage () {
-            return Math.round((this.selectedNums / this.limitNums) * 100)
+            return Math.round((this.course.selected_nums / this.course.limit_nums) * 100)
+        }
+    },
+    methods: {
+        onCopy (e) {
+            this.$store.commit('snackBar', { show: true, message: 'Copy!' }, { root: true })
+        },
+        onError (e) {
+            this.$store.commit('snackBar', { show: true, message: 'Failed!' }, { root: true })
         }
     }
 }

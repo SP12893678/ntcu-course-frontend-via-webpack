@@ -6,7 +6,11 @@ import router from './router'
 import store from './store'
 import Vuelidate from 'vuelidate'
 import vuescroll from 'vuescroll'
+import VueClipboard from 'vue-clipboard2'
 
+VueClipboard.config.autoSetContainer = true
+
+Vue.use(VueClipboard)
 Vue.use(Vuelidate)
 Vue.use(vuescroll)
 Vue.prototype.$vuescrollConfig = {
