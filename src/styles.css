@@ -21,10 +21,11 @@
 
 body{
     font-family: 'Noto Sans TC', sans-serif;
+    /* scroll-behavior: smooth; */
 }
 
 tbody > tr > td{
-    border:1px solid #888;
+    border:1px solid rgb(212, 212, 212);
 }
 
 td tbody > tr > td{

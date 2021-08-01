@@ -203,42 +203,151 @@
       </div>
     </div>
 
-    <div class=" pl-64 w-full bg-gradient-to-r from-gray-100 to-gray-400 relative h-screen">
-      <vue-scroll>
-        <!-- view mode -->
-        <div class="flex absolute top-4 right-4 rounded-lg bg-gray-200 shadow-lg">
-          <div class="px-4 py-2 rounded-l-lg text-gray-800">
-            <i class="fas fa-grip-horizontal fa-lg" />
+    <div class="flex pl-64 w-full bg-gradient-to-r from-gray-100 to-gray-400 relative h-screen overflow-x-hidden">
+      <div class="flex-1 w-full overflow-x-hidden">
+        <vue-scroll>
+          <div
+            v-if="!reivewPanel.show"
+            class="flex  fixed z-50 top-4 right-0 rounded-l-md py-6 px-1 bg-white shadow-lg"
+            @click="reivewPanel.show = !reivewPanel.show"
+          >
+            <<
           </div>
-          <div class="px-4 py-2 rounded-r-lg bg-gray-300 inner-shadow hover:bg-gray-100">
-            <i class="fas fa-list fa-lg text-gray-800" />
+          <!-- view mode -->
+          <div class="flex absolute top-4 left-4 rounded-lg bg-gray-100 shadow-lg">
+            <div class="px-4 py-2 rounded-l-lg text-gray-800">
+              <i class="fas fa-grip-horizontal fa-lg" />
+            </div>
+            <div class="px-4 py-2 rounded-r-lg bg-gray-300 inner-shadow hover:bg-gray-100">
+              <i class="fas fa-list fa-lg text-gray-800" />
+            </div>
           </div>
-        </div>
-        <Pagination
-          v-model="page"
-          :records="getFitCourses.length"
-          :per-page="perPageNums"
-          :options="paginationTemplate"
-        />
-        <!-- <CourseListTable class="mx-4" /> -->
-        <div class="flex items-center justify-center mt-4">
-          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
-            <CourseCardSkeleton
-              v-for="item in 3"
-              v-show="$store.state.course.courses.length <= 0"
-              :key="item"
-            />
+          <Pagination
+            v-model="page"
+            :records="getFitCourses.length"
+            :per-page="perPageNums"
+            :options="paginationTemplate"
+          />
+          <!-- <CourseListTable class="mx-4" /> -->
+          <div class="flex items-center justify-center mt-4">
+            <div
+              class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 "
+              :class="(reivewPanel.show)?'xl:grid-cols-3':'xl:grid-cols-4'"
+            >
+              <CourseCardSkeleton
+                v-for="item in 3"
+                v-show="$store.state.course.courses.length <= 0"
+                :key="item"
+              />
 
-            <CourseCard
-              v-for="course in getPageCourse"
-              :key="(course.code + course.no + course.class)"
-              :course="course"
-              @clickReviewEvent="openReviewPanel(course.id)"
-              @clickDetailEvent="openDetailPanel(course.id)"
+              <CourseCard
+                v-for="course in getPageCourse"
+                :key="(course.code + course.no + course.class)"
+                :course="course"
+                @clickReviewEvent="openReviewPanel(course.id)"
+                @clickDetailEvent="openDetailPanel(course.id)"
+              />
+            </div>
+          </div>
+        </vue-scroll>
+      </div>
+
+      <transition
+        v-if="reivewPanel.show"
+        name="slide-fade"
+        appear
+      >
+        <div class="course-review-panel bg-white shadow-lg overflow-x-hidde flex flex-col  h-screen relative">
+          <div
+            class="flex absolute z-50 top-4 left-0 transform  -translate-x-full rounded-l-md py-6 px-1 bg-white shadow-lg"
+            @click="reivewPanel.show = !reivewPanel.show"
+          >
+            >>
+          </div>
+          <div class="flex justify-center items-center font-medium">
+            <div class="py-2 flex-1 text-center tab-active hover:bg-gray-100">
+              一般
+            </div>
+            <div class="py-2 flex-1 text-center hover:bg-gray-100">
+              能學習到的內容
+            </div>
+            <div class="py-2 flex-1 text-center hover:bg-gray-100">
+              這堂課的優點
+            </div>
+          </div>
+          <div class="h-full overflow-y-auto">
+            <vue-scroll>
+              <div class="px-2 py-2 border-b-2">
+                <div class="flex items-center">
+                  <img
+                    class="w-8 h-8 object-cover rounded-full"
+                    alt="User avatar"
+                    src="../assets/images/cat.svg"
+                  >
+                  <div class="mx-2 w-full flex-1">
+                    <p class="font-semibold">
+                      小貓貓
+                    </p>
+                    <p class="text-gray-500 text-xs font-semibold tracking-wide">
+                      B1・6月25日 14:19
+                    </p>
+                  </div>
+                  <div class="mx-2">
+                    <i class=" mr-1 fas fa-thumbs-up fa-lg text-blue-500 hover:text-blue-500" />
+                    1
+                  </div>
+                </div>
+                <div class="mt-4">
+                  我的留言................
+                </div>
+              </div>
+
+              <div
+                v-for="i in 10"
+                class="px-2 py-2 border-b-2"
+              >
+                <div class="flex items-center">
+                  <img
+                    class="w-8 h-8 object-cover rounded-full"
+                    alt="User avatar"
+                    src="../assets/images/cat.svg"
+                  >
+                  <div class="mx-2 w-full flex-1">
+                    <p class="font-semibold">
+                      小灰包
+                    </p>
+                    <p class="text-gray-500 text-xs font-semibold tracking-wide">
+                      B2・6月25日 14:19
+                    </p>
+                  </div>
+                  <div class="mx-2">
+                    <i class=" mr-1 fas fa-thumbs-up fa-lg text-gray-300 hover:text-blue-500" />
+                    1
+                  </div>
+                </div>
+                <div class="mt-4">
+                  我的留言................
+                </div>
+              </div>
+            </vue-scroll>
+          </div>
+          <div class=" border-t-2 border-blue-500 blue-box-shadow">
+            <!-- <vue-scroll> -->
+            <textarea
+              class="w-full px-3 py-2 text-gray-700 border focus:outline-none border-t-2 textarea-scroll"
+              rows="4"
+              placeholder="請輸入留言..."
             />
+            <button
+              class=" bg-blue-500 text-white w-full py-1"
+              type="button"
+            >
+              送出
+            </button>
+            <!-- </vue-scroll> -->
           </div>
         </div>
-      </vue-scroll>
+      </transition>
     </div>
 
     <transition
@@ -247,7 +356,7 @@
       appear
     >
       <div
-        class="fixed w-full h-full bg-black bg-opacity-30 z-50"
+        class="fixed w-full h-full bg-black bg-opacity-30 z-50 "
       >
         <div
           class="flex justify-center items-center w-full h-full"
@@ -266,7 +375,7 @@
               </div>
             </div>
 
-            <div class=" w-full h-full rounded-b-lg">
+            <div class=" w-full course-detail-panel-content rounded-b-lg">
               <vue-scroll class="rounded-b-lg">
                 <div v-html="detailPanel.content" />
               </vue-scroll>
@@ -275,6 +384,7 @@
         </div>
       </div>
     </transition>
+    <CourseReview />
   </div>
 </template>
 
@@ -285,13 +395,15 @@ import CourseCardSkeleton from '../components/CourseCardSkeleton.vue'
 // import Pagination from '../components/Pagination.vue'
 import Pagination from 'vue-pagination-2'
 import MyPagination from '../components/MyPagination.vue'
+import CourseReview from '../components/CourseReview.vue'
 
 export default {
     components: {
         CourseCard,
         CourseListTable,
         CourseCardSkeleton,
-        Pagination
+        Pagination,
+        CourseReview
     },
     data () {
         return {
@@ -314,6 +426,9 @@ export default {
             detailPanel: {
                 show: false,
                 content: ''
+            },
+            reivewPanel: {
+                show: true
             }
         }
     },
@@ -367,6 +482,10 @@ export default {
         this.$store.dispatch('course/getCourseOptions')
 
         console.log(this.$store.state.courses)
+
+        // addEventListener('keydown', () => {
+        //     this.reivewPanel.show = !this.reivewPanel.show
+        // })
     },
     methods: {
         onChangeDdlEdu () {
@@ -393,12 +512,17 @@ export default {
             this.page = 1
         },
         openDetailPanel (courseID) {
-            console.log(courseID)
-            this.$store.dispatch('course/getCourseDetail', courseID).then(res => {
-                const courseDetail = this.$store.state.course.coursesDetail.find(course => course.id == courseID)
+            let courseDetail = this.$store.state.course.coursesDetail.find(course => course.id == courseID)
+            if (courseDetail != undefined) {
                 this.detailPanel.content = courseDetail.content
                 this.detailPanel.show = true
-            })
+            } else {
+                this.$store.dispatch('course/getCourseDetail', courseID).then(res => {
+                    courseDetail = this.$store.state.course.coursesDetail.find(course => course.id == courseID)
+                    this.detailPanel.content = courseDetail.content
+                    this.detailPanel.show = true
+                })
+            }
         },
         closeDetailPanel () {
             this.detailPanel.show = false
@@ -425,4 +549,46 @@ export default {
     opacity: 0
 }
 
+.course-detail-panel-content{
+  height: calc(100% - 44px);
+}
+.course-review-panel{
+  width: 26rem;
+}
+
+.blue-box-shadow{
+  box-shadow: 10px 0px 12px 0px rgb(40 126 255 / 50%);
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+    transition: all 0.3s linear;
+}
+
+.slide-fade-enter {
+    width: 0px;
+    transform: translateX(100%);
+}
+
+.slide-fade-enter-to {
+    transform: translateX(0);
+}
+
+.slide-fade-leave-to {
+    width: 0px;
+    transform: translateX(100%);
+}
+
+.tab-active{
+  color: #1867c0;
+  border-bottom: 3px solid #1867c0;
+}
+/* .tab-active:hover{
+  background-color: rgba(25, 94, 158, 0.788);
+} */
+
+/* .textarea-scroll{
+  min-height: 120px;
+  overflow-y: hidden;
+} */
 </style>
