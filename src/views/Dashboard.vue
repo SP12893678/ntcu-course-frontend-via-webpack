@@ -207,11 +207,11 @@
       <div class="flex-1 w-full overflow-x-hidden">
         <vue-scroll>
           <div
-            v-if="!reivewPanel.show"
+            v-if="!reviewPanel.show"
             class="flex  fixed z-50 top-4 right-0 rounded-l-md py-6 px-1 bg-white shadow-lg"
-            @click="reivewPanel.show = !reivewPanel.show"
+            @click="reviewPanel.show = !reviewPanel.show"
           >
-            <<
+            <i class="fas fa-angle-double-left fa-lg" />
           </div>
           <!-- view mode -->
           <div class="flex absolute top-4 left-4 rounded-lg bg-gray-100 shadow-lg">
@@ -232,7 +232,7 @@
           <div class="flex items-center justify-center mt-4">
             <div
               class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 "
-              :class="(reivewPanel.show)?'xl:grid-cols-3':'xl:grid-cols-4'"
+              :class="(reviewPanel.show)?'xl:grid-cols-3':'xl:grid-cols-4'"
             >
               <CourseCardSkeleton
                 v-for="item in 3"
@@ -244,109 +244,31 @@
                 v-for="course in getPageCourse"
                 :key="(course.code + course.no + course.class)"
                 :course="course"
-                @clickReviewEvent="openReviewPanel(course.id)"
+                @clickReviewEvent="openReviewPanel(course.name,course.code,course.teacher)"
                 @clickDetailEvent="openDetailPanel(course.id)"
               />
             </div>
           </div>
         </vue-scroll>
       </div>
-
       <transition
-        v-if="reivewPanel.show"
+        v-if="reviewPanel.show"
         name="slide-fade"
         appear
       >
-        <div class="course-review-panel bg-white shadow-lg overflow-x-hidde flex flex-col  h-screen relative">
-          <div
-            class="flex absolute z-50 top-4 left-0 transform  -translate-x-full rounded-l-md py-6 px-1 bg-white shadow-lg"
-            @click="reivewPanel.show = !reivewPanel.show"
-          >
-            >>
-          </div>
-          <div class="flex justify-center items-center font-medium">
-            <div class="py-2 flex-1 text-center tab-active hover:bg-gray-100">
-              一般
-            </div>
-            <div class="py-2 flex-1 text-center hover:bg-gray-100">
-              能學習到的內容
-            </div>
-            <div class="py-2 flex-1 text-center hover:bg-gray-100">
-              這堂課的優點
-            </div>
-          </div>
-          <div class="h-full overflow-y-auto">
-            <vue-scroll>
-              <div class="px-2 py-2 border-b-2">
-                <div class="flex items-center">
-                  <img
-                    class="w-8 h-8 object-cover rounded-full"
-                    alt="User avatar"
-                    src="../assets/images/cat.svg"
-                  >
-                  <div class="mx-2 w-full flex-1">
-                    <p class="font-semibold">
-                      小貓貓
-                    </p>
-                    <p class="text-gray-500 text-xs font-semibold tracking-wide">
-                      B1・6月25日 14:19
-                    </p>
-                  </div>
-                  <div class="mx-2">
-                    <i class=" mr-1 fas fa-thumbs-up fa-lg text-blue-500 hover:text-blue-500" />
-                    1
-                  </div>
-                </div>
-                <div class="mt-4">
-                  我的留言................
-                </div>
-              </div>
-
-              <div
-                v-for="i in 10"
-                class="px-2 py-2 border-b-2"
-              >
-                <div class="flex items-center">
-                  <img
-                    class="w-8 h-8 object-cover rounded-full"
-                    alt="User avatar"
-                    src="../assets/images/cat.svg"
-                  >
-                  <div class="mx-2 w-full flex-1">
-                    <p class="font-semibold">
-                      小灰包
-                    </p>
-                    <p class="text-gray-500 text-xs font-semibold tracking-wide">
-                      B2・6月25日 14:19
-                    </p>
-                  </div>
-                  <div class="mx-2">
-                    <i class=" mr-1 fas fa-thumbs-up fa-lg text-gray-300 hover:text-blue-500" />
-                    1
-                  </div>
-                </div>
-                <div class="mt-4">
-                  我的留言................
-                </div>
-              </div>
-            </vue-scroll>
-          </div>
-          <div class=" border-t-2 border-blue-500 blue-box-shadow">
-            <!-- <vue-scroll> -->
-            <textarea
-              class="w-full px-3 py-2 text-gray-700 border focus:outline-none border-t-2 textarea-scroll"
-              rows="4"
-              placeholder="請輸入留言..."
-            />
-            <button
-              class=" bg-blue-500 text-white w-full py-1"
-              type="button"
+        <CourseReview
+          :course-code="reviewPanel.courseCode"
+          :course-teacher="reviewPanel.courseTeacher"
+        >
+          <template slot="toggle">
+            <div
+              class="flex absolute z-50 top-4 left-0 transform  -translate-x-full rounded-l-md py-6 px-1 bg-white shadow-lg"
+              @click="reviewPanel.show = !reviewPanel.show"
             >
-              送出
-            </button>
-            <!-- </vue-scroll> -->
-          </div>
-        </div>
+              <i class="fas fa-angle-double-right fa-lg" />
+            </div>
+          </template>
+        </CourseReview>
       </transition>
     </div>
 
@@ -384,7 +306,6 @@
         </div>
       </div>
     </transition>
-    <CourseReview />
   </div>
 </template>
 
@@ -427,8 +348,11 @@ export default {
                 show: false,
                 content: ''
             },
-            reivewPanel: {
-                show: true
+            reviewPanel: {
+                show: false,
+                courseName: '',
+                courseCode: '',
+                courseTeacher: ''
             }
         }
     },
@@ -473,18 +397,13 @@ export default {
         }
     },
     mounted () {
-        // this.$store.dispatch('http/get', {
-        //     api: 'course/108/1/A'
-        // }).then((data) => {
-        //     console.log(data)
-        // })
         this.$store.dispatch('course/getAllCourseData')
         this.$store.dispatch('course/getCourseOptions')
 
         console.log(this.$store.state.courses)
 
         // addEventListener('keydown', () => {
-        //     this.reivewPanel.show = !this.reivewPanel.show
+        //     this.reviewPanel.show = !this.reviewPanel.show
         // })
     },
     methods: {
@@ -527,9 +446,16 @@ export default {
         closeDetailPanel () {
             this.detailPanel.show = false
         },
-        openReviewPanel (courseID) {
-            console.log(1)
+        openReviewPanel (courseName, courseCode, courseTeacher) {
+            const { code, teacher } = this.$store.state.course.courseReviews
+            const isNeedFetchReview = !(code == courseCode && teacher == courseTeacher)
+            if (isNeedFetchReview) { this.$store.dispatch('course/getCourseReviews', { courseCode, courseTeacher }) }
+            this.reviewPanel.courseName = courseName
+            this.reviewPanel.courseCode = courseCode
+            this.reviewPanel.courseTeacher = courseTeacher
+            this.reviewPanel.show = true
         }
+
     }
 }
 </script>
@@ -552,14 +478,15 @@ export default {
 .course-detail-panel-content{
   height: calc(100% - 44px);
 }
-.course-review-panel{
-  width: 26rem;
-}
 
-.blue-box-shadow{
-  box-shadow: 10px 0px 12px 0px rgb(40 126 255 / 50%);
-}
+/* .tab-active:hover{
+  background-color: rgba(25, 94, 158, 0.788);
+} */
 
+/* .textarea-scroll{
+  min-height: 120px;
+  overflow-y: hidden;
+} */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
     transition: all 0.3s linear;
@@ -578,17 +505,4 @@ export default {
     width: 0px;
     transform: translateX(100%);
 }
-
-.tab-active{
-  color: #1867c0;
-  border-bottom: 3px solid #1867c0;
-}
-/* .tab-active:hover{
-  background-color: rgba(25, 94, 158, 0.788);
-} */
-
-/* .textarea-scroll{
-  min-height: 120px;
-  overflow-y: hidden;
-} */
 </style>

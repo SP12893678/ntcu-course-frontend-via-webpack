@@ -7,7 +7,8 @@ const initState = function () {
             { value: 1, name: '第一學期' },
             { value: 2, name: '第二學期' }
         ],
-        coursesDetail: []
+        coursesDetail: [],
+        courseReviews: []
     }
 }
 const state = initState()
@@ -54,6 +55,52 @@ const actions = {
                 }
             })
         })
+    },
+    getCourseReviews ({ dispatch, commit, state }, { courseCode, courseTeacher }) {
+        return new Promise((resolve, reject) => {
+            dispatch('http/post', { api: 'course/reviews', code: courseCode, teacher: courseTeacher }, { root: true }).then(res => {
+                if (res.status == '1') {
+                    commit('setCourseReviews', res.data)
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    },
+    postCourseReview ({ dispatch, commit, state }, { courseCode, courseTeacher, reviewType, reviewContent }) {
+        return new Promise((resolve, reject) => {
+            dispatch('http/post', {
+                api: 'course/review/insert',
+                code: courseCode,
+                teacher: courseTeacher,
+                type: reviewType,
+                review_content: reviewContent
+            }, { root: true }).then(res => {
+                if (res.status == '1') {
+                    commit('setCourseReviews', res.data)
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    },
+    likeCourseReview ({ dispatch, commit, state }, { reviewID, like }) {
+        return new Promise((resolve, reject) => {
+            dispatch('http/post', {
+                api: 'course/review/like',
+                id: reviewID,
+                like: like
+            }, { root: true }).then(res => {
+                if (res.status == '1') {
+                    commit('setCourseReview', res.data)
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            })
+        })
     }
 }
 
@@ -71,6 +118,14 @@ const mutations = {
     },
     setCourseDetail (state, value) {
         state.coursesDetail.push(value)
+    },
+    setCourseReviews (state, value) {
+        state.courseReviews = value
+    },
+    setCourseReview (state, value) {
+        const reviewIdx = state.courseReviews.reviews.findIndex(review => review.id == value.reviews[0].id)
+
+        Object.assign(state.courseReviews.reviews[reviewIdx], value.reviews[0])
     },
     reset (state) {
         state = Object.assign(state, initState())
