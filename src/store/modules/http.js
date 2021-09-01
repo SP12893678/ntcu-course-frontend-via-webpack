@@ -48,7 +48,7 @@ const actions = {
                 })
                 .catch((error) => {
                     console.log(error.message)
-                    commit('dialogBox', { dialog: true }, { root: true })
+                    commit('dialogBox', { dialog: true, option: { dialog: { title: '發生錯誤', message: '請重新整理再試一次' } } }, { root: true })
                     resolve(false)
                 })
         })
@@ -66,6 +66,7 @@ const actions = {
                 })
                 .catch((error) => {
                     console.log(error.message)
+                    commit('dialogBox', { dialog: true, option: { dialog: { title: '發生錯誤', message: '請重新整理再試一次' } } }, { root: true })
                     resolve(false)
                 })
         })

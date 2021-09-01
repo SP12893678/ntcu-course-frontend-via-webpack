@@ -2,12 +2,18 @@
   <div class="panel min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white px-4 py-4 rounded-lg box-shadow">
       <div class="flex items-center justify-center">
-        <img
+        <!-- <img
           class=" px-2 h-12"
           src="../assets/images/education.svg"
           alt="Workflow"
-        >
-        <h2 class=" text-center text-3xl font-extrabold text-gray-900">
+        > -->
+        <div class="flex text-2xl MajorMonoDisplay">
+          <h1>N</h1>
+          <h1>T</h1>
+          <h1>C</h1>
+          <h1>U</h1>
+        </div>
+        <h2 class=" text-center text-2xl font-medium text-gray-900">
           會員登入
         </h2>
       </div>
@@ -21,7 +27,7 @@
           name="remember"
           value="true"
         >
-        <div class="rounded-md shadow-sm -space-y-px">
+        <div class="rounded-md shadow-sm space-y-2">
           <div>
             <label
               for="email-address"
@@ -34,21 +40,24 @@
               type="email"
               autocomplete="email"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="信箱 *"
+              @input="$v.user.email.$touch"
             >
-          </div>
-          <div
-            v-if="!$v.user.email.required"
-            class="error"
-          >
-            必填
-          </div>
-          <div
-            v-if="!$v.user.email.email"
-            class="error"
-          >
-            須符合Email格式
+            <div v-if="$v.user.email.$error">
+              <div
+                v-if="!$v.user.email.required"
+                class="error"
+              >
+                必填
+              </div>
+              <div
+                v-if="!$v.user.email.email"
+                class="error"
+              >
+                須符合Email格式
+              </div>
+            </div>
           </div>
           <div>
             <label
@@ -62,27 +71,30 @@
               type="password"
               autocomplete="current-password"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="密碼 *"
+              @input="$v.user.password.$touch"
             >
-          </div>
-          <div
-            v-if="!$v.user.password.required"
-            class="error"
-          >
-            必填
-          </div>
-          <div
-            v-if="!$v.user.password.minLength"
-            class="error"
-          >
-            密碼至少{{ $v.user.password.$params.minLength.min }}個長度
-          </div>
-          <div
-            v-if="!$v.user.password.maxLength"
-            class="error"
-          >
-            密碼最多{{ $v.user.password.$params.maxLength.max }}個長度
+            <div v-if="$v.user.password.$error">
+              <div
+                v-if="!$v.user.password.required"
+                class="error"
+              >
+                必填
+              </div>
+              <div
+                v-if="!$v.user.password.minLength"
+                class="error"
+              >
+                密碼至少{{ $v.user.password.$params.minLength.min }}個長度
+              </div>
+              <div
+                v-if="!$v.user.password.maxLength"
+                class="error"
+              >
+                密碼最多{{ $v.user.password.$params.maxLength.max }}個長度
+              </div>
+            </div>
           </div>
         </div>
 
@@ -127,7 +139,7 @@
             to="/register"
             class="text-gray-500 hover:text-gray-700"
           >
-            <h4 class="mt-6 text-center font-extrabold">
+            <h4 class="mt-6 text-center">
               尚未成為會員?
             </h4>
           </router-link>
@@ -174,10 +186,8 @@ export default {
             this.submit.disable = true
             this.$store.dispatch('http/post', {
                 api: 'api/auth/login',
-                user: {
-                    email: this.user.email,
-                    password: btoa(this.user.password)
-                }
+                email: this.user.email,
+                password: btoa(this.user.password)
             })
                 .then((data) => {
                     if (data == false) return

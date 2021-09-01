@@ -36,3 +36,8 @@ table {
     border: 0;
     border-collapse: collapse;
   }
+
+
+  .MajorMonoDisplay{
+    font-family: 'MajorMonoDisplay', sans-serif !important;
+  }

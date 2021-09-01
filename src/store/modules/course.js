@@ -120,11 +120,12 @@ const mutations = {
         state.coursesDetail.push(value)
     },
     setCourseReviews (state, value) {
+        value.reviews.forEach(item => { item.date_time = new Date(item.date_time) })
         state.courseReviews = value
     },
     setCourseReview (state, value) {
         const reviewIdx = state.courseReviews.reviews.findIndex(review => review.id == value.reviews[0].id)
-
+        value.reviews[0].date_time = new Date(value.reviews[0].date_time)
         Object.assign(state.courseReviews.reviews[reviewIdx], value.reviews[0])
     },
     reset (state) {

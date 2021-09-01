@@ -18,27 +18,27 @@
                 <a
                   href="#"
                   class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
-                >Dashboard</a>
+                >首頁</a>
 
                 <a
                   href="#"
                   class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >Team</a>
+                >課程面板</a>
 
                 <a
                   href="#"
                   class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >Projects</a>
+                >宿舍資訊</a>
 
                 <a
                   href="#"
                   class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >Calendar</a>
+                >最新公告</a>
 
                 <a
                   href="#"
                   class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >Reports</a>
+                >Q&A</a>
               </div>
             </div>
           </div>
@@ -63,6 +63,13 @@
                   />
                 </svg>
               </button>
+
+              <router-link
+                to="/login"
+                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                登入
+              </router-link>
 
               <!-- Profile dropdown -->
               <div class="ml-3 relative">
@@ -305,16 +312,28 @@
     <main class="h-full flex flex-1 bg-gradient-to-r from-blue-400 to-purple-400">
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 my-auto">
         <div class="flex sm:space-x-8 md:space-x-16 space-x-32">
-          <div class=" relative text-4xl text-white border rounded-2xl px-6 py-6 MajorMonoDisplay ">
+          <div class=" relative text-white border rounded-2xl px-6 py-6 MajorMonoDisplay ">
             <div class="flex text-5xl">
               <h1>N</h1>
               <h1>T</h1>
               <h1>C</h1>
               <h1>U</h1>
             </div>
-            <h1 class="mt-2">
-              學生服務系統
+            <h1 class="mt-2 mb-6 text-4xl font-semibold">
+              學生服務平台
             </h1>
+
+            <div class="border rounded-full px-4 py-1 text-sm">
+              <i class="fas fa-chalkboard-teacher mr-2" />課程
+            </div>
+
+            <div class="mt-6 border rounded-full px-4 py-1 text-sm">
+              <i class="fas fa-chalkboard-teacher mr-2" />宿舍
+            </div>
+
+            <div class="mt-6 border rounded-full px-4 py-1 text-sm">
+              <i class="fas fa-chalkboard-teacher mr-2" />資訊
+            </div>
             <!-- <svg class="absolute top-0 left-0  w-full h-full">
               <rect class=" stroke"></rect>
             </svg> -->
@@ -359,10 +378,6 @@ export default {
 /* .slide-fade-leave-active for below version 2.1.8 */ {
   transform: translateY(10px);
   opacity: 0;
-}
-
-.MajorMonoDisplay{
-  font-family: 'MajorMonoDisplay', sans-serif !important;
 }
 
 .stroke{

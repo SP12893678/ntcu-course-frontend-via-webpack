@@ -24,8 +24,11 @@
           class=" bg-gray-100 hover:bg-gray-200 mx-2 px-2 py-1 rounded "
           @click="sort.show = !sort.show"
         >
-          <i class="fas fa-fire mr-1" />
-          熱門
+          <i
+            class="fas mr-1"
+            :class="sort.selected.icon"
+          />
+          {{ sort.selected.text }}
         </button>
         <transition name="slide-fade">
           <div
@@ -34,22 +37,16 @@
             role="menu"
           >
             <a
+              v-for="option in sort.options"
+              :key="option.value"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              @click="selectReviewsSort(option)"
             >
-              <i class="fas fa-fire mr-2 w-3" />
-              熱門
-            </a>
-            <a
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-            >
-              <i class="fas fa-sort-amount-up-alt mr-2 w-3" />
-              最新
-            </a>
-            <a
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-            >
-              <i class="fas fa-sort-amount-down-alt mr-2 w-3" />
-              最舊
+              <i
+                class="fas mr-2 w-3"
+                :class="option.icon"
+              />
+              {{ option.text }}
             </a>
           </div>
         </transition>
@@ -73,7 +70,7 @@
                 {{ review.user_id }}
               </p>
               <p class="text-gray-500 text-xs font-semibold tracking-wide">
-                B{{ index }}・{{ getDateTimeString(review.date_time) }}
+                {{ getDateTimeString(review.date_time) }}
               </p>
             </div>
             <div class="mx-2">
@@ -133,7 +130,13 @@ export default {
             type: 1,
             types: ['一般', '能學習到的內容', '這堂課的優點'],
             sort: {
-                show: false
+                show: false,
+                selected: { text: '熱門', value: 'hot', icon: 'fa-fire' },
+                options: [
+                    { text: '熱門', value: 'hot', icon: 'fa-fire' },
+                    { text: '最新', value: 'latest', icon: 'fa-sort-amount-up-alt' },
+                    { text: '最舊', value: 'oldest', icon: 'fa-sort-amount-down-alt' }
+                ]
             },
             content: ''
         }
@@ -142,13 +145,19 @@ export default {
         getCourseReviews () {
             const reviews = this.$store.state.course.courseReviews.reviews
             if (!reviews) return []
-            return reviews.filter(review => review.type == this.type)
+            const fitReviews = reviews.filter(review => review.type == this.type)
+            return this.sortCourseReviews(this.sort.selected.value, fitReviews)
         }
+
     },
     methods: {
         getDateTimeString (date_time) {
-            const date = new Date(date_time)
-            return `${date.getMonth()}月${date.getDay()}日 ${date.getHours()}:${date.getMinutes()}`
+            const convertTwoDigit = (value) => value < 10 ? '0' + value : '' + value
+            const month = convertTwoDigit(date_time.getMonth())
+            const day = convertTwoDigit(date_time.getDay())
+            const hour = convertTwoDigit(date_time.getHours())
+            const minute = convertTwoDigit(date_time.getMinutes())
+            return `${month}月${day}日 ${hour}:${minute}`
         },
         setType (index) {
             this.type = index + 1
@@ -171,10 +180,26 @@ export default {
                 reviewID: id,
                 like: !like
             })
+        },
+        sortCourseReviews (key, reviews) {
+            const sort = {
+                hot (reviews) {
+                    return reviews.sort((a, b) => (a.likes > b.likes) ? -1 : 1)
+                },
+                latest (reviews) {
+                    return reviews.sort((a, b) => (a.date_time > b.date_time) ? -1 : 1)
+                },
+                oldest (reviews) {
+                    return reviews.sort((a, b) => (a.date_time < b.date_time) ? -1 : 1)
+                }
+            }
+            return sort[key](reviews)
+        },
+        selectReviewsSort (option) {
+            this.sort.show = false
+            if (option.value == this.sort.selected.value) return
+            else this.sort.selected = option
         }
-        // setShow () {
-        //     this.$emit('update:show', !this.show)
-        // }
     }
 }
 </script>
